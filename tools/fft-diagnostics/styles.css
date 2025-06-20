@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  background: #111;
+  color: #fff;
+  font-family: monospace;
+  padding: 1em;
+}
+
+#log {
+  white-space: pre-wrap;
+  font-size: 12px;
+}
