@@ -11,6 +11,12 @@ export class FrequencySlider {
     this.frequency = this.getFrequency();
   }
 
+  setFrequency(hz) {
+    const percent = map(hz, this.minHz, this.maxHz, 0, 1);
+    this.handleX = this.x + this.width * percent;
+    this.frequency = hz;
+  }
+
   getFrequency() {
     const percent = (this.handleX - this.x) / this.width;
     return map(percent, 0, 1, this.minHz, this.maxHz);

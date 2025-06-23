@@ -3,10 +3,13 @@ import { PlayButton } from '../../components/play_button.js';
 import { StopButton } from '../../components/stop_button.js';
 import { WaveformVisualizer } from '../../components/waveform_visualizer.js';
 import { FftGraph } from '../../components/fft_graph.js';
+import { NoteSelector } from '../../components/note_selector.js';
+import { noteFrequencies } from '../../components/notes.js';
 
 let slider, playButton, stopButton, visualizer;
 let oscillator;
 let playing = false;
+let noteSelector;
 
 let fftGraph;
 let fft;
@@ -16,13 +19,13 @@ let logEl;
 
 function setup() {
   console.log('🔧 setup fired');
-  createCanvas(1200, 400);
+  createCanvas(1200, 600);
   textFont('monospace');
 
   // UI Components
   slider = new FrequencySlider(100, 100, 1000); // px fr left, px fr top, px wide
-  playButton = new PlayButton(width - 40, 10);
-  stopButton = new StopButton(width - 20, 10);
+  playButton = new PlayButton(width - 50, 20);
+  stopButton = new StopButton(width - 30, 20);
   visualizer = new WaveformVisualizer();
 
   // Oscillator
@@ -40,6 +43,12 @@ function setup() {
     width: width,
     height: 200,
     fillColor: [0, 255, 0]
+  });
+
+  noteSelector = new NoteSelector(noteFrequencies, 800, 450, (note) => {
+  // Update slider and oscillator
+    slider.setFrequency(note.freq);
+    if (playing) oscillator.freq(note.freq);
   });
 
   // FFT Analysis
@@ -79,6 +88,9 @@ function draw() {
   // FFT Graph
   fftGraph.draw(this);
   
+  // Note Selector
+  noteSelector.draw(this);
+
 }
 
 function mousePressed() {
@@ -96,6 +108,8 @@ function mousePressed() {
   }
 
   slider.handlePressed(mouseX, mouseY);
+
+  noteSelector.handlePressed(mouseX, mouseY);
 }
 
 function mouseDragged() {
