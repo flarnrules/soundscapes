@@ -4,9 +4,31 @@ body {
   color: #fff;
   font-family: monospace;
   padding: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Diagnostic output */
 #log {
   white-space: pre-wrap;
   font-size: 12px;
+  max-width: 1000px;
+  margin-top: 1em;
+}
+
+/* Container for dynamic layout components like canvas and future controls */
+#app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+/* Make sure canvas is centered */
+canvas {
+  display: block;
+  margin: 0 auto;
+  border: 2px solid #333;
+  background-color: #000;
 }

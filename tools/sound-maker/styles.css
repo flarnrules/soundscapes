@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #111;
+  color: #eee;
+  font-family: monospace;
+}
+
+#controls {
+  padding: 10px 20px;
+  background-color: #222;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 14px;
+}
+
+#log {
+  margin-left: auto;
+  font-size: 13px;
+  color: #9f9;
+}
+
+#app-container {
+  width: 100%;
+  height: calc(100vh - 50px); /* give space for controls */
+}
