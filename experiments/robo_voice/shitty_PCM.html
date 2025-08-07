@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>🧠 Million Dollar Robot Voice Engine</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #000;
+      color: #0f0;
+      padding: 2rem;
+    }
+    label { display: block; margin-top: 1em; }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    .slider-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .slider-group span {
+      width: 50px;
+      text-align: right;
+    }
+    button {
+      margin-top: 2em;
+      padding: 1em;
+      font-size: 1em;
+      background: #0f0;
+      color: #000;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎤 Million Dollar Robot Voice Engine</h1>
+
+  <label>Text</label>
+  <textarea id="text">I am the robot overlord.</textarea>
+
+  <label>Voice</label>
+  <select id="voice"></select>
+
+  <div class="slider-group">
+    <label>Layers</label><input type="range" id="layers" min="1" max="5" value="3"><span id="layersVal">3</span>
+  </div>
+
+  <div class="slider-group">
+    <label>Delay (ms)</label><input type="range" id="delay" min="0" max="300" step="10" value="80"><span id="delayVal">80</span>
+  </div>
+
+  <div class="slider-group">
+    <label>Detune (cents)</label><input type="range" id="detune" min="0" max="100" step="1" value="25"><span id="detuneVal">25</span>
+  </div>
+
+  <div class="slider-group">
+    <label>Stereo Spread</label><input type="range" id="spread" min="0" max="1" step="0.1" value="0.6"><span id="spreadVal">0.6</span>
+  </div>
+
+  <button id="speak">🧬 Synthesize</button>
+
+  <script>
+    const textArea = document.getElementById("text");
+    const voiceSelect = document.getElementById("voice");
+    const layers = document.getElementById("layers");
+    const delay = document.getElementById("delay");
+    const detune = document.getElementById("detune");
+    const spread = document.getElementById("spread");
+
+    const layersVal = document.getElementById("layersVal");
+    const delayVal = document.getElementById("delayVal");
+    const detuneVal = document.getElementById("detuneVal");
+    const spreadVal = document.getElementById("spreadVal");
+
+    [layers, delay, detune, spread].forEach(input => {
+      input.addEventListener("input", () => {
+        layersVal.textContent = layers.value;
+        delayVal.textContent = delay.value;
+        detuneVal.textContent = detune.value;
+        spreadVal.textContent = spread.value;
+      });
+    });
+
+    const synth = window.speechSynthesis;
+    let voices = [];
+
+    function populateVoices() {
+      voices = synth.getVoices();
+      voiceSelect.innerHTML = "";
+      voices.forEach(voice => {
+        const option = document.createElement("option");
+        option.textContent = `${voice.name} (${voice.lang})`;
+        option.setAttribute("data-name", voice.name);
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    populateVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoices;
+    }
+
+    document.getElementById("speak").addEventListener("click", async () => {
+      const text = textArea.value;
+      const selectedVoiceName = voiceSelect.selectedOptions[0].getAttribute("data-name");
+      const layerCount = parseInt(layers.value);
+      const baseDelay = parseInt(delay.value);
+      const detuneAmount = parseInt(detune.value);
+      const stereoSpread = parseFloat(spread.value);
+
+      const context = new AudioContext();
+      const destination = context.createMediaStreamDestination();
+      const gainNode = context.createGain();
+      gainNode.gain.value = 1.0;
+
+      const panner = context.createStereoPanner();
+
+      gainNode.connect(panner);
+      panner.connect(context.destination);
+
+      function speakLayer(layerIndex) {
+        return new Promise((resolve) => {
+          const utterance = new SpeechSynthesisUtterance(text);
+          const voice = voices.find(v => v.name === selectedVoiceName);
+          if (voice) utterance.voice = voice;
+
+          const pitchOffset = ((layerIndex - layerCount / 2) * detuneAmount) / 100;
+          const rateOffset = ((layerIndex - layerCount / 2) * 0.05);
+
+          utterance.pitch = 1 + pitchOffset;
+          utterance.rate = 1 + rateOffset;
+
+          // Connect the utterance to an output so we can route it
+          const dummyAudio = new Audio();
+          dummyAudio.srcObject = destination.stream;
+
+          utterance.onend = resolve;
+
+          // Pan left/right based on layer
+          const panValue = ((layerIndex / (layerCount - 1)) - 0.5) * 2 * stereoSpread;
+          panner.pan.value = panValue;
+
+          synth.speak(utterance);
+          dummyAudio.play();
+        });
+      }
+
+      synth.cancel();
+
+      for (let i = 0; i < layerCount; i++) {
+        setTimeout(() => {
+          speakLayer(i);
+        }, i * baseDelay);
+      }
+    });
+  </script>
+</body>
+</html>
