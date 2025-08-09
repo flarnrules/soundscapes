@@ -1,0 +1,7 @@
+This experiment uses "espeak"
+an example of use for espeak is like this:
+`espeak -w hello.wav "hello"`
+this will output a .wav file called hello.
+
+To install espeak, you can run:
+`sudo apt install espeak`

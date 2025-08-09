@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Robot Voice Phaser</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    canvas { border: 1px solid #444; margin-top: 1em; }
+    .controls { margin: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Robot Voice Phaser</h1>
+  <p>
+    1. Generate a WAV with eSpeak:<br>
+    <code>espeak -w hello.wav "Your text here"</code>
+  </p>
+  <p>
+    2. Load it below:
+    <input type="file" id="fileInput" accept="audio/wav"/>
+    <button id="loadBtn">Load &amp; Play</button>
+    <button id="stopBtn" disabled>Stop &amp; Download</button>
+  </p>
+
+ <div class="controls">
+  <!-- Phaser -->
+  <label>Rate: <input type="range" id="rate"   min="0.0" max="100"    step="0.1" value="0.5"></label>
+  <label>Depth: <input type="range" id="depth"  min="0"   max="1"    step="0.01" value="0.5"></label>
+  <label>Stages: <input type="range" id="stages" min="2"   max="100"   step="1" value="6"></label>
+  <label>Feedback: <input type="range" id="feedback" min="0.5" max="0.99" step="0.01" value="0.7"></label>
+  <label>Mix: <input type="range" id="mix"     min="0"   max="1"    step="0.01" value="0.5"></label>
+
+  <!-- Sweep range -->
+  <label>Min Freq: <input type="number" id="phaserMin" value="500"></label>
+  <label>Max Freq: <input type="number" id="phaserMax" value="1500"></label>
+
+  <!-- TTS playback -->
+  <label>Speed: <input type="range" id="speed"  min="0.5" max="2"    step="0.01" value="1"></label>
+  <label>Pitch: <input type="range" id="pitch"  min="-1200" max="1200" step="10"  value="0"></label>
+
+  <!-- Visual & analysis -->
+  <label>FFT Size: <input type="range" id="fftSize" min="32" max="4096" step="32" value="2048"></label>
+</div>
+
+  <canvas id="waveform" width="600" height="100"></canvas>
+
+  <!-- Recorder.js UMD build -->
+  <script src="recorderjs/recorder.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
