@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Live Synth · Sequencer · Patterns</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>🎚️ Live Synth Workstation</header>
+
+  <main class="app">
+    <!-- Left: controls -->
+    <section class="controls">
+      <div class="panel">
+        <div class="row">
+          <button id="startBtn">Start Audio</button>
+          <button id="stopAllBtn">Stop Notes</button>
+        </div>
+        <small>Keys: A W S E D F T G Y H U J K • Sustain: Space • Octave: Z / X (<b id="octaveDisp">0</b>)</small>
+      </div>
+
+      <div class="panel">
+        <h3>Transport</h3>
+        <div class="row">
+          <button id="transportBtn">Play</button>
+          <label>BPM <input id="bpm" type="number" min="40" max="240" step="1" value="120" style="width:80px"></label>
+          <label>Swing <input id="swing" type="range" min="0" max="65" step="1" value="0"></label>
+          <label><input id="quantizeLaunch" type="checkbox" checked> Launch on next bar</label>
+          <button id="clearSeq">Clear</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Pitch Grid</h3>
+        <label>Mode
+          <select id="mode">
+            <option value="scale" selected>Key / Scale</option>
+            <option value="chromatic">Chromatic</option>
+          </select>
+        </label>
+        <label>Key
+          <select id="keyRoot">
+            <option>C</option><option>C#</option><option>D</option><option>D#</option>
+            <option>E</option><option>F</option><option>F#</option><option>G</option>
+            <option>G#</option><option>A</option><option>A#</option><option>B</option>
+          </select>
+        </label>
+        <label>Scale
+          <select id="scaleType">
+            <option value="major">Major</option>
+            <option value="naturalMinor" selected>Natural Minor</option>
+            <option value="harmonicMinor">Harmonic Minor</option>
+            <option value="dorian">Dorian</option>
+            <option value="pentatonicMajor">Pentatonic Major</option>
+            <option value="pentatonicMinor">Pentatonic Minor</option>
+          </select>
+        </label>
+        <small>Click = note • <b>Shift</b>=triad • <b>Ctrl/Cmd</b>=7th</small>
+      </div>
+
+      <div class="panel">
+        <h3>Oscillator</h3>
+        <div id="waveRadios" class="wave-radios" role="radiogroup" aria-label="Waveform">
+          <label><svg viewBox="0 0 100 40"><path d="M0 20 Q25 0 50 20 T100 20" fill="none" stroke="currentColor" stroke-width="3"/></svg><input type="radio" name="wave" value="sine"></label>
+          <label><svg viewBox="0 0 100 40"><path d="M0 20 H25 V5 H75 V35 H100" fill="none" stroke="currentColor" stroke-width="3"/></svg><input type="radio" name="wave" value="square" checked></label>
+          <label><svg viewBox="0 0 100 40"><path d="M0 35 L25 5 L25 35 L50 5 L50 35 L75 5 L75 35 L100 5" fill="none" stroke="currentColor" stroke-width="3"/></svg><input type="radio" name="wave" value="sawtooth"></label>
+          <label><svg viewBox="0 0 100 40"><path d="M0 35 L25 5 L50 35 L75 5 L100 35" fill="none" stroke="currentColor" stroke-width="3"/></svg><input type="radio" name="wave" value="triangle"></label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Envelope (ADSR)</h3>
+        <label>Attack  <input id="attack" type="range" min="0" max="2" step="0.01" value="0.02"></label>
+        <label>Decay   <input id="decay"  type="range" min="0" max="2" step="0.01" value="0.15"></label>
+        <label>Sustain <input id="sustain"type="range" min="0" max="1" step="0.01" value="0.6"></label>
+        <label>Release <input id="release"type="range" min="0" max="3" step="0.01" value="0.4"></label>
+      </div>
+
+      <div class="panel">
+        <h3>Filter & LFO</h3>
+        <label>Cutoff <input id="cutoff" type="range" min="100" max="8000" step="1" value="1200"></label>
+        <label>Q <input id="q" type="range" min="0.0001" max="20" step="0.0001" value="0.7"></label>
+        <label>Type
+          <select id="filterType">
+            <option value="lowpass" selected>lowpass</option>
+            <option value="highpass">highpass</option>
+            <option value="bandpass">bandpass</option>
+          </select>
+        </label>
+        <label>LFO Rate <input id="lfoRate"  type="range" min="0" max="20" step="0.01" value="4"></label>
+        <label>LFO Depth <input id="lfoDepth" type="range" min="0" max="2000" step="1" value="500"></label>
+      </div>
+
+      <div class="panel">
+        <h3>Delay</h3>
+        <label>Time <input id="delayTime" type="range" min="0" max="1.2" step="0.01" value="0.25"></label>
+        <label>Feedback <input id="delayFeedback" type="range" min="0" max="0.95" step="0.01" value="0.35"></label>
+        <label>Mix <input id="delayMix" type="range" min="0" max="1" step="0.01" value="0.3"></label>
+      </div>
+
+      <div class="panel">
+        <h3>Mixer</h3>
+        <div class="row">
+          <button id="leadMute">Lead M</button>
+          <button id="leadSolo">S</button>
+          <label>Lead <input id="leadVol" type="range" min="0" max="1" step="0.01" value="0.9"></label>
+        </div>
+        <div class="row">
+          <button id="bassMute">Bass M</button>
+          <button id="bassSolo">S</button>
+          <label>Bass <input id="bassVol" type="range" min="0" max="1" step="0.01" value="0.9"></label>
+        </div>
+        <div class="row">
+          <button id="drumMute">Drum M</button>
+          <button id="drumSolo">S</button>
+          <label>Drum <input id="drumVol" type="range" min="0" max="1" step="0.01" value="0.9"></label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Patterns</h3>
+        <div id="patternGrid" class="pattern-grid"></div>
+        <div class="row">
+          <button id="savePattern">Save to Slot</button>
+          <button id="dupPattern">Duplicate</button>
+          <button id="deletePattern">Delete</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Export / Record</h3>
+        <button id="exportMidiBtn">Export MIDI</button>
+        <div class="row">
+          <button id="recToggle">● Record</button>
+          <a id="recDownload" style="display:none">Download</a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Image Reactive</h3>
+        <label><input type="checkbox" id="imageReactive" checked> Enable</label>
+        <input type="file" id="imageInput" accept="image/*">
+      </div>
+    </section>
+
+    <!-- Right: displays -->
+    <section class="display">
+      <div class="topRow">
+        <div class="stack">
+          <canvas id="wave"></canvas>
+          <canvas id="bars"></canvas>
+        </div>
+        <canvas id="img"></canvas>
+      </div>
+
+      <canvas id="seq" title="Click=note • Shift=triad • Ctrl/Cmd=7th • Left gutter: per-row velocity"></canvas>
+    </section>
+  </main>
+
+  <script type="module" src="./src/index.js"></script>
+</body>
+</html>

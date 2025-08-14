@@ -1,0 +1,17 @@
+/src
+  audio/
+    engine.js         // AudioContext graph, buses, effects, params
+    voices.js         // start/release voice, drums, envelopes
+    recorder.js       // MediaRecorder or OfflineAudioContext exports
+  seq/
+    theory.js         // key/scale, chromatic grids, chord helpers
+    scheduler.js      // clock, swing, scheduling lead/bass/drums
+    state.js          // patterns, velocities, serialization (save/load)
+  ui/
+    controls.js       // sliders, radios, volumes, transport, handlers
+    canvases.js       // waveform, spectrum, image-reactive paint
+    sequencerCanvas.js// grid hit-testing & drawing
+  io/
+    midiExport.js     // SMF encoder (ppq, meta, tracks)
+    storage.js        // localStorage/IndexedDB pattern bank
+index.js              // wires everything together

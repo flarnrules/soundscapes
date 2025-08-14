@@ -1,0 +1,205 @@
+:root{
+  --bg:#121212;
+  --panel:#1b1b1b;
+  --line:#2a2a2a;
+  --canvas:#0e0e0e;
+  --grid:#222;
+  --accent:#8ab4ff;
+  --accent2:#9be58c;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: #eee;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  overflow: hidden; /* single-page, no scroll */
+}
+
+/* Header */
+header {
+  padding: 10px 14px;
+  background: #1e1e1e;
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+
+/* App layout */
+.app {
+  height: calc(100vh - 44px);
+  display: grid;
+  grid-template-columns: 420px 1fr; /* controls | display */
+  overflow: hidden;
+}
+
+/* Controls sidebar */
+.controls {
+  border-right: 1px solid var(--line);
+  padding: 12px;
+  overflow: auto; /* allow scroll inside the sidebar only */
+  background: #141414;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.panel h3 {
+  margin: 0 0 8px;
+  font-weight: 600;
+  font-size: 14px;
+  opacity: 0.9;
+}
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  margin: 6px 0;
+}
+input[type="range"], select {
+  width: 220px;
+}
+button {
+  background: #2b2b2b;
+  border: 1px solid #3a3a3a;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button:hover { background: #343434; }
+small { opacity: 0.8; }
+
+/* Waveform radios (oscillator type) */
+.wave-radios {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 6px;
+}
+.wave-radios label {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  color: var(--accent2);
+}
+.wave-radios svg { width: 48px; height: 32px; }
+.wave-radios input { accent-color: var(--accent2); }
+
+/* Display area (right side) */
+.display{
+  padding:10px;
+  display:grid;
+  /* top row (osc+bars | image) then sequencer */
+  grid-template-rows: minmax(280px, 38%) 1fr; /* give the sequencer more space */
+  gap:8px;
+  height:100%;
+  overflow:hidden;
+}
+
+/* Top row: left stack (wave+bars) and right image */
+.topRow{
+  display:grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr);
+  min-height: 280px;
+  gap:8px;
+  overflow:hidden;
+}
+
+/* Left stack: oscilloscope (top) + spectrum bars (bottom) */
+.stack{
+  display:grid;
+  grid-template-rows: 1fr 1fr; /* even split avoids cutoff */
+  min-height: 280px;
+  gap:8px;
+}
+
+/* All canvases share these base styles */
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+/* Safety minima so top canvases never collapse in very short windows */
+#wave, #bars { min-height: 140px; }
+#img { min-height: 180px; }
+
+/* Sequencer canvas occupies remaining space; ensure drums are reachable */
+#seq { min-height: 300px; cursor: crosshair; }
+
+/* Pattern bank */
+.pattern-grid{
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap:8px;
+}
+.patternSlot{
+  display:grid;
+  grid-template-columns: auto 1fr;
+  gap:6px;
+  align-items:center;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#1e1e1e;
+  color:#ddd;
+  cursor:pointer;
+  text-align:left;
+}
+.patternSlot strong{
+  font-size:12px;
+  opacity:0.85;
+  padding-right:6px;
+}
+.patternSlot span{
+  font-size:12px;
+  opacity:0.75;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Accessibility / focus */
+button:focus-visible,
+.patternSlot:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Sliders look a bit nicer on dark bg */
+input[type="range"]{
+  appearance: none;
+  height: 4px;
+  background: #2a2a2a;
+  border-radius: 2px;
+}
+input[type="range"]::-webkit-slider-thumb{
+  appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--accent);
+  border: 1px solid #0b0b0b;
+  margin-top: -5px;
+}
+input[type="range"]::-moz-range-thumb{
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--accent);
+  border: 1px solid #0b0b0b;
+}
+
+/* Utility */
+.hidden { display: none !important; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
